@@ -1,0 +1,234 @@
+[tool.poetry]
+    name = "hello_django"
+    version = "0.1.0"
+    description = ""
+    authors = [
+        "Matthew Martin <matthewdeanmartin@gmail.com>"
+    ]
+
+    include = [
+        "hello_django/**/*.py",
+        "hello_django/**/*.md",
+        "hello_django/**/*.txt",
+        "hello_django/**/*.html",
+        "hello_django/**/*.yml",
+        "hello_django/**/*.yaml",
+
+        "vendor/**/*.py",
+        "vendor/*.md",
+        "vendor/*.txt",
+    ]
+packages = [
+    {include = "hello_django"}
+]
+
+[tool.poetry.dependencies]
+python = ">=3.11,<4.0"
+
+# core framework
+django = "==5.0.7"
+
+# Rest API support
+djangorestframework = "*"
+rest-framework-generic-relations = "*"
+djangorestframework-fsm = "*"
+drf-spectacular = "*" # open api
+drf-nested-routers="*"
+whitenoise = "*" # static file support (for swagger UI files?)
+
+# auth
+django-keycloak-auth = "*" # authentication (middleware)
+cryptography = "*" # authentication (no direct dep?)
+pyjwt = "*" # authentication
+netaddr = "*" # Calculations for CORS support
+
+# db and ORM support
+psycopg2-binary = "*"
+django-money = "*"
+
+# graphs of models plus others
+django-extensions = "*"
+# finite state machine support
+django-fsm = "*"
+django-fsm-admin = "*"
+
+# django utilities
+django-health-check = "*"
+django-filter = "*"
+
+# logging
+django-structlog = "*"
+
+# utility to parse/build uris
+uritemplate = "*"
+
+# swagger/openapi support/and clients
+requests-futures = "*"
+coreapi = "*"  # open api client?
+
+# settings for dev env
+python-dotenv = "*"
+
+# AWS support
+boto3 = "*"
+
+## pdfs
+#weasyprint = "<53"
+#pango = "*"
+
+# typing and dates
+typing_extensions = "*"
+pytz = "*"
+
+# Serialization format (for what?)
+pyyaml = "*"
+simplejson = "*"
+
+# webserver
+gunicorn = "*" # wsgi or asgi, cross plat
+uvicorn = "*" # asgi, linux/mac only
+aiohttp = "*"
+
+
+[tool.poetry.dev-dependencies]
+setuptools = ">=68.0.0"
+
+# testing
+pytest-cov = ">=4.1.0"
+pytest-xdist =">=3.5.0"
+pytest-randomly=">=3.15.0"
+pytest-sugar =">=0.9.7"
+pytest-socket = ">=0.7.0"
+pytest = ">=7.2.0"
+
+# mocks
+moto = ">=5, <6"
+fakeredis = ">=2.20.0"
+pytest-mock="*"
+time-machine = "*"
+
+# types
+types-redis="*"
+types-requests="*"
+types-toml="*"
+types-PyYaml="*"
+types-jsonschema="*"
+types-python-jose="*"
+
+# linting
+pylint = ">=3.2.6"
+ruff = ">=0.5.7"
+
+# tools
+metametameta = "*"
+mdformat = "*"
+deadcode= "*"
+# loc-strict-build-script = { version = "==3.12.8", source = "strict-build-script" }
+
+[tool.poetry.group.dev.dependencies]
+deptry = "^0.14.1"
+isort = "^5.13.2"
+black = "^24.8.0"
+
+[tool.vulture]
+    exclude = ["hello_django/utils/"]
+    ignore_decorators = [
+        # code called by webserver
+        "@public_endpoint",
+        # code run by scripts or lambdas
+        "@script_entrypoint",
+        # code that unit tests need, e.g. deleting data
+        "@test_support",
+    ]
+    ignore_names = []
+    make_whitelist = true
+    min_confidence = 20
+    paths = ["hello_django"]
+    sort_by_size = true
+    verbose = false
+
+[tool.black]
+    line-length = 88
+    target-version = ['py39']
+    include = '\.pyi?$'
+    exclude = '''
+
+(
+  /(
+      \.eggs         # exclude a few common directories in the
+    | \.git          # root of the project
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | buck-out
+    | build
+    | dist
+  )/
+  | foo.py           # also separately exclude a file named foo.py in
+                     # the root of the project
+)
+'''
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.refurb]
+    ignore = [
+        123, # str(x) is defensive coding. How do we know that it really is a string?
+        107,
+    ]
+    # load = ["some_module"]
+    # load = ["some_module"]
+    # quiet = true
+
+
+[tool.ruff]
+    line-length = 88
+
+    # Enable Pyflakes `E` and `F` codes by default.
+    select = ["E", "F"]
+    ignore = ["E722", "E501"]
+
+    # Exclude a variety of commonly ignored directories.
+    exclude = [
+        "dead_code",
+        ".bzr",
+        ".direnv",
+        ".eggs",
+        ".git",
+        ".hg",
+        ".mypy_cache",
+        ".nox",
+        ".pants.d",
+        ".ruff_cache",
+        ".svn",
+        ".tox",
+        ".venv",
+        "__pypackages__",
+        "_build",
+        "buck-out",
+        "build",
+        "dist",
+        "node_modules",
+        "venv",
+    ]
+    per-file-ignores = {}
+
+    # Allow unused variables when underscore-prefixed.
+    dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+    # Assume Python 3.10.
+    target-version = "py311"
+
+[tool.isort]
+    profile = "black"
+
+[tool.bandit]
+#exclude_dirs = ["tests", "path/to/file"]
+tests = []
+skips = []
+
